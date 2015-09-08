@@ -1,0 +1,139 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 20/07/2015, 05:18:35 م
+    Author     : Gheith
+*/
+
+
+.main-container{
+    margin-top:  80px;
+}
+
+form input{
+    text-align:right;
+}
+
+.navbar{
+    background: #ffffff;
+    font-size: 18px;
+}
+
+.card {
+    background-color: #ffffff;
+    /* just in case there no content*/
+    padding: 20px 25px 30px;
+    margin: 0 auto 10px;
+    /* shadows and rounded borders */
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+
+
+//search bar on the table list of request
+.filterable {
+    margin-top: 15px;
+}
+.filterable .panel-heading .pull-right {
+    margin-top: -20px;
+}
+.filterable .filters input[disabled] {
+    background-color: transparent;
+    border: none;
+    cursor: auto;
+    box-shadow: none;
+    padding: 0;
+    height: auto;
+}
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+    color: #333;
+}
+.filterable .filters input[disabled]::-moz-placeholder {
+    color: #333;
+}
+.filterable .filters input[disabled]:-ms-input-placeholder {
+    color: #333;
+}
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #ffff66;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr{
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.field-title{
+    font-size: 19px;
+   color: #000000;
+
+}
+.field-info{
+    font-size: 19px;
+    color: #006666;
+
+}
+.card-title{
+    font-size: 25px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="email"],
+input[type="date"],
+textarea,
+select option
+{
+    font-size: 18px;
+}
+
+input[type=number]::-webkit-inner-spin-button { 
+    -webkit-appearance: none;
+    cursor:pointer;
+    display:block;
+    width:8px;
+    color: #333;
+    text-align:center;
+    position:relative;
+}
+
+input[type=number]::-webkit-inner-spin-button:before,
+input[type=number]::-webkit-inner-spin-button:after {
+    content: "";
+    position:absolute;
+    right: 0;
+    font-family:monospace;
+}
+
+input[type=number]::-webkit-inner-spin-button:before {
+    top:0px;
+}
+
+input[type=number]::-webkit-inner-spin-button:after {
+    bottom:0px;
+    -webkit-transform: rotate(180deg);
+}
+
+.table-head{
+    font-size: 17px; 
+    font-weight: bolder; 
+    text-align: right;
+}
+
+ul li{
+    text-align: right;
+}
+
+.form-textarea{
+    font-size: 18px; 
+    resize: none;
+}

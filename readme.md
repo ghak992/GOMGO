@@ -1,5 +1,5 @@
 
-<h4>
+<h6>
 This project created by Gheith Hamood Alrawahi (alrawahi.gheith@gmail.com) using PHP/MySql over Laravel 5.1 framework. To run this project perfectly you need: 
 <br><br>
 1. Make sure provide : <br>
@@ -21,5 +21,5 @@ You need to modify this part from .env file : <br>
 Use next account to access inside system  <br>
 Email : root@gomgo.com  <br>
 Password : ghak992 <br>
-I suggest to change this account email and password after first access.  https://github.com/ghak992/GOMGO as soon as possible. 
-</h4>
+I suggest to change this account email and password after first access.  
+</h6>

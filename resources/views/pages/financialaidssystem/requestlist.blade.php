@@ -65,7 +65,6 @@
                                     <table class="table table-bordered table-hover" >
                                         <thead>
                                             <tr class="filters">
-                                                <th align="right"><input type="checkbox"  text="Dharan" name="checkall"></th>                                          
                                                 <th align="right"><input type="text" class="form-control" placeholder="الإسم" disabled></th>
                                                 <th align="right"><input type="text" class="form-control" placeholder="الرقم المدني" disabled></th>                                            
                                                 <th align="right"><input type="text" class="form-control" placeholder="رقم الطلب" disabled></th>                                            
@@ -83,7 +82,6 @@
                                             foreach ($requests as $request) {
                                                 ?>
                                                 <tr>
-                                                    <td align="right"><input type="checkbox"  name="check" value="{{1}}"></td>
                                                     <td align="right">
                                                         {{$request->requester_first_name}}
                                                         {{$request->requester_middle_name}}

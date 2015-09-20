@@ -116,22 +116,20 @@
 @stop
 
 @section('content')
-<div  class="container" >
-    <div id="main-container" class="row">
-        <div class="center-block">
 
 
-            <div class="center-block"><div class="container">
-                    <div class="card card-container" >
-                        <div class="text-right">
-                            <p class="card-title" style="float: right">
-                                <i class="fa fa-file-code-o"></i>
-                                اضافة صفحة جديدة
-                                &nbsp;:
-                            </p>
-                        </div>
-                        <hr>
-                        <br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Nav tabs --><div class="card">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation"><a href="#currentnewsystempage" aria-controls="currentnewsystempage" role="tab" data-toggle="tab">الصفحات الحالية</a></li>
+                    <li role="presentation" class="active"><a href="#newsystempage" aria-controls="newsystempage" role="tab" data-toggle="tab">صفحة جديدة</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="newsystempage">
                         <div class="row">
                             @if (isset($addsucsess))
                             @if ($addsucsess == true)
@@ -207,23 +205,9 @@
                                 {!! Form::close() !!}
                             </div>
                         </div>
-
-                    </div>  
-                </div>
-            </div>
-            <div class="center-block"><div class="container">
-                    <div class="card card-container" >
-                        <div class="text-right">
-                            <p class="card-title" style="float: right">
-                                <i class="fa fa-file-code-o"></i>
-                                صفحات النظام
-                                &nbsp;:
-                            </p>
-                        </div>
-                        <hr>
-                        <br>
-                        <div class="row">
-                            <div class="filterable">
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="currentnewsystempage">
+                         <div class="filterable">
                                 <div class="panel-heading">
                                     <div class="pull-right">
                                         <button class="btn btn-default btn-sm btn-filter">
@@ -242,7 +226,7 @@
                                             <th align="right" class="table-head">المستخدمين</th>
                                             <th align="right" class="table-head">الوصف</th>                                            
                                             <th align="right" class="table-head">تعديل</th>                                            
-                                            <th align="right" class="table-head">حذف</th>                                            
+                                            <!--<th align="right" class="table-head">حذف</th>-->                                            
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -285,7 +269,7 @@
                                                         تعديل
                                                     </button>
                                                 </td>
-                                                <td align="right">
+    <!--                                                <td align="right">
                                                     <button class="btn btn-danger btn-block btn-sm"
                                                             data-toggle="modal"
                                                             data-target="#system-page-delete-modal"
@@ -294,7 +278,7 @@
                                                         <i class="fa fa-trash"></i>
                                                         حذف
                                                     </button>
-                                                </td>
+                                                </td>-->
                                             </tr>
                                             <?php
                                         }
@@ -308,15 +292,14 @@
                                 {!! $systempage->render() !!}
                             </div>
                         </div>
-
-                    </div>  
+                    </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
+
+
 @stop
 
 

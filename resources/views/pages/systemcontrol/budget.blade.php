@@ -133,7 +133,8 @@
                                             <th align="right"><input type="text" class="form-control" placeholder="السنة" disabled></th>
                                             <th align="right" class="table-head">تاريخ الإنشاء</th>                                            
                                             <th align="right" class="table-head">الميزانية</th>                                            
-                                            <th align="right" class="table-head">الطلبات الموافق عليها</th>                                            
+                                            <th align="right" class="table-head">الطلبات المواف عليها</th>                                          
+                                            <th align="right" class="table-head">قيمة الطلبات الموافق عليها</th>                                            
                                             <th align="right" class="table-head">المصروف</th>
                                             <th align="right" class="table-head">انتظار الصرف</th>
                                             <th align="right" class="table-head">المتبقي</th>
@@ -144,7 +145,7 @@
                                         foreach ($yearsbudget as $budget) {
                                             ?>
                                             <tr>
-                                                <td align="right">
+                                                <td align="right" style="width: 45px;">
                                                     {{$budget->year}}
                                                 </td>
                                                 <td align="right">
@@ -166,11 +167,14 @@
                                                     ?>
                                                 </td>
 
-                                                <td align="right">{{$budget->amount}}</td>
-                                                <td align="right">{{$approvedaidsbudget[$budget->year]}}</td>
-                                                <td align="right">{{$yearsexchangeide[$budget->year]}}</td>
-                                                <td align="right">{{$approvedaidsbudget[$budget->year] - $yearsexchangeide[$budget->year]}}</td>
-                                                <td align="right">{{$budget->amount - $yearsexchangeide[$budget->year]}}</td>
+                                                <td align="right">{{$budget->amount}} ريال</td>
+                                                <td align="right">{{$approvedrequestscount[$budget->year]}}</td>
+                                                <td align="right">{{$approvedaidsbudget[$budget->year]}} ريال</td>
+                                                <td align="right"> 
+                                                    {{$yearsexchangeide[$budget->year]}} ريال</td>
+                                                <td align="right">
+                                                    {{$approvedaidsbudget[$budget->year] - $yearsexchangeide[$budget->year]}} ريال</td>
+                                                <td align="right">{{$budget->amount - $yearsexchangeide[$budget->year]}} ريال</td>
                                             </tr>
                                             <?php
                                         }

@@ -38,8 +38,24 @@
                     civilid_box_results.hide();
                 },
                 success: function (results, textStatus, jqXHR) {
-                    if (results.length > 0) {
-                        $.each(results, function (id, request) {
+                    if (results.shortdata.length > 0) {
+
+                        $('input[name="fname"]').val(results.requesterinfo["requester_first_name"]);
+                        $('input[name="mname"]').val(results.requesterinfo["requester_middle_name"]);
+                        $('input[name="lname"]').val(results.requesterinfo["requester_last_name"]);
+                        $('input[name="sname"]').val(results.requesterinfo["requester_sair_name"]);
+
+                        $('input[name="birthday"]').val(results.requesterinfo["requester_bod"]);
+                        $('#maritalstatus option[value=' + results.requesterinfo["requester_marital_status"] + ']').prop('selected', true);
+                        $('#gender option[value=' + results.requesterinfo["requester_gender"] + ']').prop('selected', true);
+
+                        $('input[name="addressdistrict"]').val(results.requesterinfo["requester_address_district"]);
+                        $('#state option[value=' + results.requesterinfo["address_state"] + ']').prop('selected', true);
+
+                        $('input[name="phone"]').val(results.requesterinfo["requester_phone"]);
+                        $('input[name="bankaccount"]').val(results.requesterinfo["requester_bank_acount_id"]);
+
+                        $.each(results.shortdata, function (id, request) {
                             var url = '{{ URL::to("financial-aids-system/requests-info/:id") }}';
                             url = url.replace(':id', request["id"]);
                             civilid_box_results.append('<li style="padding-top: 3px; font-size:16px; padding-bottom: 3px"><a target="_blank" style="color: #0000C2; word-wrap: break-word; white-space: normal" href="' + url + '" > طلب ' + request["name"] + ' رقم الطلب &nbsp;' + request["id"] + '</a></li > ');
@@ -75,7 +91,7 @@
                                 </ol>
                             </div>
                             @endif
-                            
+
                             {!! Form::open(['files'=>true, 'url' => 'financial-aids-system/new-request/store', 'role'=>'form' ,'method' => 'POST', 'class'=>'form-newuser form-horizontal']) !!}
 
                             <fieldset>
@@ -86,12 +102,27 @@
                                 </legend>
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                                <!-- Text input-->
+
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label right-lable" for="textinput">الرقم المدني</label>
+                                    <div class="col-sm-9">
+                                        <input value="{{old('civilid') }}"  type="number" 
+                                               name="civilid"
+                                               id="civilid"
+                                               required=""
+                                               placeholder="الرقم المدني"
+                                               class="form-control">
+                                        <ol id="civilid_box_results">
+
+                                        </ol>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label  
-                                        class="col-sm-2 control-label right-lable" 
+                                        class="col-sm-3 control-label right-lable" 
                                         for="textinput">الإسم الثلاثي والقبيلة</label>
-                                    <div id="name-inputs" class="col-sm-10">
+                                    <div id="name-inputs" class="col-sm-9">
                                         <div class="row">
                                             <div class="col-sm-6">
                                                 <input value="{{old('mname') }}"  type="text"
@@ -127,12 +158,12 @@
                                     </div>
                                 </div>
 
-                                
-                                
-                                
+
+
+
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label right-lable" for="textinput">تاريخ الميلاد</label>
-                                    <div class="col-sm-10">
+                                    <label class="col-sm-3 control-label right-lable" for="textinput">تاريخ الميلاد</label>
+                                    <div class="col-sm-9">
                                         <input value="{{old('birthday') }}" class="form-control" 
                                                name="birthday"
                                                required=""
@@ -140,28 +171,14 @@
                                     </div>
                                 </div>
 
-                                <!-- Text input-->
+
+
+
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label right-lable" for="textinput">الرقم المدني</label>
-                                    <div class="col-sm-10">
-                                        <input value="{{old('civilid') }}"  type="number" 
-                                               name="civilid"
-                                               id="civilid"
-                                               required=""
-                                               placeholder="الرقم المدني"
-                                               class="form-control">
-                                        <ol id="civilid_box_results">
-
-                                        </ol>
-                                    </div>
-                                </div>
-
-
-                                <!-- Text input-->
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label right-lable" for="textinput">الجنس</label>
-                                    <div class="col-sm-4">
+                                    <label class="col-sm-3 control-label right-lable" for="textinput">الجنس</label>
+                                    <div class="col-sm-3">
                                         <select 
+                                            id="maritalstatus"
                                             name="maritalstatus"
                                             class="form-control">
                                             @foreach($maritalstatus as $status)
@@ -170,9 +187,9 @@
                                         </select>
                                     </div>
 
-                                    <label class="col-sm-2 control-label" for="textinput">الحالة الإجتماعية</label>
-                                    <div class="col-sm-4">
-                                        <select class="form-control" name="gender">
+                                    <label class="col-sm-3 control-label" style="text-align: left" for="textinput">الحالة الإجتماعية</label>
+                                    <div class="col-sm-3">
+                                        <select class="form-control" id="gender" name="gender">
                                             <option value="M">ذكر</option>
                                             <option value="F">أنثى</option>
                                         </select>
@@ -182,9 +199,9 @@
                                     <br>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label right-lable" for="textinput">العنوان</label>
+                                            <label class="col-sm-3 control-label right-lable" for="textinput">العنوان</label>
 
-                                            <div class="col-sm-5">
+                                            <div class="col-sm-4">
                                                 <input value="{{old('addressdistrict') }}"  type="text" 
                                                        name="addressdistrict"
                                                        required=""
@@ -194,6 +211,7 @@
                                             <div class="col-sm-5">
                                                 <select 
                                                     name="state"
+                                                    id="state"
                                                     class="form-control">
                                                     @foreach($muscatstates as $states)
                                                     <option value="{{$states->id}}">{{$states->state_name}}</option>
@@ -209,8 +227,8 @@
                                     <br>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label right-lable" for="textinput">رقم الهاتف</label>
-                                            <div class="col-sm-10">
+                                            <label class="col-sm-3 control-label right-lable" for="textinput">رقم الهاتف</label>
+                                            <div class="col-sm-9">
                                                 <input value="{{old('phone') }}"  type="number" 
                                                        name="phone"
                                                        required=""
@@ -224,8 +242,8 @@
                                     <br>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label right-lable" for="textinput">رقم حساب البنك</label>
-                                            <div class="col-sm-10">
+                                            <label class="col-sm-3 control-label right-lable" for="textinput">رقم حساب البنك</label>
+                                            <div class="col-sm-9">
                                                 <input value="{{old('bankaccount') }}"  type="number" 
                                                        name="bankaccount"
                                                        required=""
@@ -240,8 +258,8 @@
                                     <br>
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label right-lable" for="textinput">سبب طلب المساعدة</label>
-                                            <div class="col-sm-10">
+                                            <label class="col-sm-3 control-label right-lable" for="textinput">طبيعة المساعدة</label>
+                                            <div class="col-sm-9">
                                                 <select  name="reasone" class="form-control">
                                                     @foreach($requestreasone as $reasone)
                                                     <option value="{{$reasone->id}}">{{$reasone->type}}</option>
@@ -253,8 +271,8 @@
 
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label right-lable" for="textinput">ملاحظات</label>
-                                            <div class="col-sm-10">
+                                            <label class="col-sm-3 control-label right-lable" for="textinput">اسباب الطلب</label>
+                                            <div class="col-sm-9">
                                                 <textarea
                                                     required
                                                     value="{{old('comments') }}"
@@ -272,8 +290,8 @@
 
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="col-sm-2 control-label right-lable" for="textinput">المستندات المرفقة</label>
-                                            <div class="col-sm-10">
+                                            <label class="col-sm-3 control-label right-lable" for="textinput">المستندات المرفقة</label>
+                                            <div class="col-sm-9">
                                                 <input 
                                                     multiple="true"
                                                     class="form-control"
@@ -289,7 +307,7 @@
                                 <div class="form-group">
                                     <div class="col-sm-offset-2 col-sm-10">
                                         <div class="pull-left">
-                                            <button type="submit" class="btn btn-default">إلغاء</button>
+                                            <button type="reset" class="btn btn-default">إلغاء</button>
                                             <button type="submit" class="btn btn-primary">حفظ</button>
                                         </div>
                                     </div>
@@ -298,7 +316,7 @@
                             </fieldset>
                             {!! Form::close() !!}
                             <br>
-                            
+
                         </div><!-- /.col-lg-12 -->
                     </div><!-- /.row -->
                 </div>  

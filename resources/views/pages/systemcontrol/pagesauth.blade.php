@@ -2,7 +2,7 @@
 
 
 @section('title')
-صلاحيات الدخول
+صلاحيات الوصول
 @stop
 
 @section('style')

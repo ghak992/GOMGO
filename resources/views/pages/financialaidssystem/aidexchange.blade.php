@@ -137,7 +137,7 @@
                         </span>
                         <div class="col-md-6 col-md-offset-4">
                             <?php
-                            if ($requestinfo[0]->status == 4) {
+                            if ($requestinfo[0]->status == 4 && \Auth::user()->role == 5) {
                                 ?>
                             {!! Form::submit('صرف', ['class'=>"btn btn-primary btn-signin formsubmit"]) !!}
                             <?php

@@ -33,7 +33,7 @@
                 },
                 success: function (response) {
                     if (response.status == "true") {
-location.reload();
+                        location.reload();
 //                        $('#checker-name').text(response.user_name);
 //                        $('#check-date').text(response.created_at);
 //                        $('#check-date').text(response.created_at);
@@ -667,7 +667,7 @@ location.reload();
                             'class'=>'form-request-unsave form-inline']) !!}
 
                             <?php
-                            if ($request[0]->status == 3) {
+                            if ($request[0]->status == 3 && \Auth::user()->role == 4) {
                                 ?>
                                 <span class="btn btn-default"
                                       id="request-add-firstcheck"
@@ -676,7 +676,9 @@ location.reload();
                                       >الموافقة على الطلب</span>
                                       <?php
                                   }
-                                  if ($request[0]->status == 1) {
+
+
+                                  if ($request[0]->status == 1 && \Auth::user()->role == 3) {
                                       ?>
                                 <span class="btn btn-success"
                                       id="request-add-firstcheck"
@@ -685,42 +687,56 @@ location.reload();
                                       >تحويل الطلب لأخذ الموافقة</span>
                                       <?php
                                   }
-                                  if ($request[0]->status != 2 && $request[0]->status != 4) {
+                                  if ($request[0]->status == 4) {
                                       ?>
-
-                                <span class="btn btn-danger"
-                                      id="request-add-save"
-                                      data-toggle="modal"
-                                      data-target="#saverequestmodal"
-                                      >تحويل الطلب للحفظ</span>
+                            <h3>الطلب في انتظار الصرف </h3>
                                       <?php
                                   }
+
+
+                                  if ($request[0]->status != 2) {
+                                      if ((\Auth::user()->role == 3 && $request[0]->status != 3) || \Auth::user()->role == 4) {
+                                          ?>
+
+                                    <span class="btn btn-danger"
+                                          id="request-add-save"
+                                          data-toggle="modal"
+                                          data-target="#saverequestmodal"
+                                          >تحويل الطلب للحفظ</span>
+                                          <?php
+                                      }
+                                  }
+
+
+
                                   if ($request[0]->status == 2) {
-                                      ?>
-                                <input 
-                                    name="id"
-                                    type="hidden"
-                                    value="{{$request[0]->id}}">
+                                      if (\Auth::user()->role == 3 || \Auth::user()->role == 4) {
+                                          ?>
+                                    <input 
+                                        name="id"
+                                        type="hidden"
+                                        value="{{$request[0]->id}}">
 
-                                <input 
-                                    name="status"
-                                    type="hidden"
-                                    value="{{$savedinfo[0]->last_status}}">
+                                    <input 
+                                        name="status"
+                                        type="hidden"
+                                        value="{{$savedinfo[0]->last_status}}">
 
-                                <button type="submit"
-                                        id="unsvaebutton"
-                                        class="btn btn-warning"
-                                        >استخراج الطلب من الحفظ</button>
-                                        <?php
+                                    <button type="submit"
+                                            id="unsvaebutton"
+                                            class="btn btn-warning"
+                                            >استخراج الطلب من الحفظ</button>
+                                            <?php
+                                        }
                                     }
                                     ?>
                             {!! Form::close() !!}
 
                         </div>
                     </div> 
-                    <?php
-                }
-                ?>
+    <?php
+}
+?>
 
 
             </div>
@@ -898,11 +914,7 @@ location.reload();
     </div>
 </div>
 
-<?php
-//if (isset($approvedinfo)) {
-//    print_r($approvedinfo);
-//}
-?>
+
 
 <div class="modal fade"
      id="requestapprovedmodal"
@@ -944,9 +956,9 @@ location.reload();
                             <input id="aidvalue"
                                    disabled="true"
                                    type="number"
-                                   <?php
-                                   if (isset($checkinfo)) {
-                                       ?>
+<?php
+if (isset($checkinfo)) {
+    ?>
                                        value="{{$checkinfo[0]->aid_amount}}"
                                        <?php
                                    }
@@ -962,8 +974,8 @@ location.reload();
                                    name="lastaidvalue"
                                    type="number"
                                    min="1"
-                                   <?php if (isset($checkinfo)) {
-                                       ?>
+<?php if (isset($checkinfo)) {
+    ?>
                                        value="{{$checkinfo[0]->aid_amount}}"
                                        <?php
                                    }

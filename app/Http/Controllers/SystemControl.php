@@ -42,7 +42,138 @@ class SystemControl extends Controller {
      * @return Response
      */
     public function create() {
+
         //
+    }
+
+    public function requests() {
+        $maritalstatus = \Illuminate\Support\Facades\DB::table('marital_status')->get(['id', 'title']);
+        $muscatstates = \Illuminate\Support\Facades\DB::table('muscat_state')->get(['id', 'state_name']);
+        $requestreasones = \Illuminate\Support\Facades\DB::table('request_reasone')->get(['id', 'type']);
+        $exchangeways = \Illuminate\Support\Facades\DB::table('exchange_way')->get(['id', 'name']);
+        return view('pages.systemcontrol.requests')
+                        ->with('muscatstates', $muscatstates)
+                        ->with('requestreasones', $requestreasones)
+                        ->with('exchangeways', $exchangeways)
+                        ->with('maritalsstatus', $maritalstatus);
+    }
+
+    public function requestsaddnew(\Illuminate\Http\Request $request) {
+        $array = [];
+        $array['status'] = 'false';
+        $array['destinathon'] = $request->input("destinathon");
+
+
+        if ($request->input("destinathon") == "muscatstate") {
+            $rules = [
+                'state_name' => 'required|string|unique:muscat_state'
+            ];
+            $nicename = [
+                'state_name' => 'اسم الولاية'
+            ];
+            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules);
+            $validator->setAttributeNames($nicename);
+
+            if ($validator->fails()) {
+                $array['status'] = 'false';
+                $array['errors'] = $validator->getMessageBag()->toArray();
+            } else {
+                $add = new \App\Muscat_state();
+                $add->state_name = $request->input("state_name");
+                $add->save();
+                $array['status'] = 'true';
+            }
+        } elseif ($request->input("destinathon") == "requestreasone") {
+            $rules = [
+                'type' => 'required|string|unique:request_reasone'
+            ];
+            $nicename = [
+                'type' => 'طبيعة المساعدة'
+            ];
+            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules);
+            $validator->setAttributeNames($nicename);
+
+            if ($validator->fails()) {
+                $array['status'] = 'false';
+                $array['errors'] = $validator->getMessageBag()->toArray();
+            } else {
+                $add = new \App\Request_reasone();
+                $add->type = $request->input("type");
+                $add->save();
+                $array['status'] = 'true';
+            }
+        } elseif ($request->input("destinathon") == "maritalstatus") {
+            $rules = [
+                'title' => 'required|string|unique:marital_status'
+            ];
+            $nicename = [
+                'title' => 'الحالة الاجتماعية'
+            ];
+            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules);
+            $validator->setAttributeNames($nicename);
+
+            if ($validator->fails()) {
+                $array['status'] = 'false';
+                $array['errors'] = $validator->getMessageBag()->toArray();
+            } else {
+                $add = new \App\Marital_status();
+                $add->title = $request->input("title");
+                $add->save();
+                $array['status'] = 'true';
+            }
+        } elseif ($request->input("destinathon") == "exchangeways") {
+            $rules = [
+                'name' => 'required|string|unique:exchange_way'
+            ];
+            $nicename = [
+                'name' => 'طريقة الصرف'
+            ];
+            $validator = \Illuminate\Support\Facades\Validator::make($request->all(), $rules);
+            $validator->setAttributeNames($nicename);
+
+            if ($validator->fails()) {
+                $array['status'] = 'false';
+                $array['errors'] = $validator->getMessageBag()->toArray();
+            } else {
+                $add = new \App\Marital_status();
+                $add->name = $request->input("name");
+                $add->save();
+                $array['status'] = 'true';
+            }
+        }
+
+        return \Illuminate\Support\Facades\Response::json($array);
+    }
+
+    public function requestsupdate(\Illuminate\Http\Request $request) {
+        $array = [];
+        $array['status'] = 'false';
+        $array['destinathon'] = $request->input("destinathon");
+
+
+        if ($request->input("destinathon") == "muscatstate") {
+            $update = \App\Muscat_state::findOrNew($request->input('id'));
+            $update->state_name = $request->input("changevalue");
+            $update->save();
+            $array['status'] = 'true';
+        } elseif ($request->input("destinathon") == "requestreasone") {
+           $update = \App\Request_reasone::findOrNew($request->input('id'));
+            $update->type = $request->input("changevalue");
+            $update->save();
+            $array['status'] = 'true';
+        } elseif ($request->input("destinathon") == "maritalstatus") {
+           $update = \App\Marital_status::findOrNew($request->input('id'));
+            $update->title = $request->input("changevalue");
+            $update->save();
+            $array['status'] = 'true';
+        } elseif ($request->input("destinathon") == "exchangeways") {
+            $update = \App\Exchange_way::findOrNew($request->input('id'));
+            $update->name = $request->input("changevalue");
+            $update->save();
+            $array['status'] = 'true';
+        }
+
+        return \Illuminate\Support\Facades\Response::json($array);
     }
 
     public function systempages() {
@@ -50,6 +181,8 @@ class SystemControl extends Controller {
         $systempage = \Illuminate\Support\Facades\DB::table('system_page')
                 ->orderBy('system_page.created_at', 'DESC')
                 ->paginate(25);
+        
+        
         $systempage->setPath('');
         $pagesid = [];
         foreach ($systempage as $key => $value) {
@@ -89,6 +222,7 @@ class SystemControl extends Controller {
         $array['status'] = 'true';
         return \Illuminate\Support\Facades\Response::json($array);
     }
+
     public function deletesystempage(\Illuminate\Http\Request $request) {
         \App\System_page::where('id', $request->input('id'))->delete();
         $array['status'] = 'true';
@@ -184,32 +318,32 @@ class SystemControl extends Controller {
 
     public static function sendEmaile($request_id, $created_date, $operation_title) {
 
-        $users = \Illuminate\Support\Facades\DB::table('user')
-                ->where('user.role', '=', 3)//ID of maneger on role table
-                ->select(
-                        'user.email', 'user.first_name', 'user.middle_name', 'user.last_name', 'user.sair_name'
-                )
-                ->get();
-
-        $requesterinfo = \Illuminate\Support\Facades\DB::table('request')
-                ->where('request.id', '=', $request_id)//ID of maneger on role table
-                ->select(
-                        'request.requester_first_name', 'request.requester_middle_name', 'request.requester_last_name', 'request.requester_sair_name'
-                )
-                ->get();
-        $requester_name = $requesterinfo[0]->requester_first_name . ' ' .
-                $requesterinfo[0]->requester_middle_name . ' ' .
-                $requesterinfo[0]->requester_last_name . ' ' .
-                $requesterinfo[0]->requester_sair_name;
-
-        $emaildata = ['request_id' => $request_id, 'requestername' => $requester_name, 'operation_title' => $operation_title, 'created_at' => $created_date];
-        foreach ($users as $user) {
-            $data = [$user, $operation_title];
-            \Illuminate\Support\Facades\Mail::send('emails.requestoperations', $emaildata, function ($m) use ($data) {
-                $name = $data[0]->first_name . ' ' . $data[0]->middle_name . ' ' . $data[0]->sair_name;
-                $m->to($data[0]->email, $name)->subject($data[1]);
-            });
-        }
+//        $users = \Illuminate\Support\Facades\DB::table('user')
+//                ->where('user.role', '=', 3)//ID of maneger on role table
+//                ->select(
+//                        'user.email', 'user.first_name', 'user.middle_name', 'user.last_name', 'user.sair_name'
+//                )
+//                ->get();
+//
+//        $requesterinfo = \Illuminate\Support\Facades\DB::table('request')
+//                ->where('request.id', '=', $request_id)//ID of maneger on role table
+//                ->select(
+//                        'request.requester_first_name', 'request.requester_middle_name', 'request.requester_last_name', 'request.requester_sair_name'
+//                )
+//                ->get();
+//        $requester_name = $requesterinfo[0]->requester_first_name . ' ' .
+//                $requesterinfo[0]->requester_middle_name . ' ' .
+//                $requesterinfo[0]->requester_last_name . ' ' .
+//                $requesterinfo[0]->requester_sair_name;
+//
+//        $emaildata = ['request_id' => $request_id, 'requestername' => $requester_name, 'operation_title' => $operation_title, 'created_at' => $created_date];
+//        foreach ($users as $user) {
+//            $data = [$user, $operation_title];
+//            \Illuminate\Support\Facades\Mail::send('emails.requestoperations', $emaildata, function ($m) use ($data) {
+//                $name = $data[0]->first_name . ' ' . $data[0]->middle_name . ' ' . $data[0]->sair_name;
+//                $m->to($data[0]->email, $name)->subject($data[1]);
+//            });
+//        }
     }
 
     /**
@@ -248,9 +382,23 @@ class SystemControl extends Controller {
             $approvedaidsbudget[$years[$index]] = ($approvedaidbudget[0]->total < 1) ? 0 : $approvedaidbudget[0]->total;
         }
 
+        $approvedrequestscount = [];
+        for ($index = 0; $index < count($years); $index++) {
+            $approvedrequestcount = \Illuminate\Support\Facades\DB::table('request')
+                    ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                    ->where(\Illuminate\Support\Facades\DB::raw('YEAR(created_at)'), '=', $years[$index])
+                    ->get();
+            $approvedrequestscount[$years[$index]] = ($approvedrequestcount[0]->requests_count < 1) ? 0 : $approvedrequestcount[0]->requests_count;
+        }
+
+
+
+
+
         return view("pages.systemcontrol.budget")
                         ->with("yearsbudget", $yearsbudget)
                         ->with("approvedaidsbudget", $approvedaidsbudget)
+                        ->with("approvedrequestscount", $approvedrequestscount)
                         ->with("yearsexchangeide", $yearsexchangeide);
     }
 

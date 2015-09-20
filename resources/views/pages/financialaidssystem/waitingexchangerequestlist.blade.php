@@ -41,10 +41,10 @@
                                                 <span class="fa fa-filter"></span> 
                                                 البحث في القائمة
                                             </button>
-                                            <button class="btn btn-warning btn-sm">
+                                            <a href="{{URL::to('export/all/waitingexchangeRequestsList')}}" class="btn btn-success btn-sm">
                                                 <span class="fa fa-print"></span> 
-                                                طباعة هذه القائمة
-                                            </button>
+                                                استخراج الطلبات
+                                            </a>
                                         </div>
                                     </div>
                                     <br>

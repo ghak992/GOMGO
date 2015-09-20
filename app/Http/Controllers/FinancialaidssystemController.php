@@ -13,8 +13,126 @@ class FinancialaidssystemController extends Controller {
      *
      * @return Response
      */
-    public function index() {
-        return view('pages.financialaidssystem.index');
+    public function index($year = null) {
+        if (!in_array(rtrim(preg_replace('/[0-9]+/', '', Request::path()), '/'), session()->get('user-pages-auth'))) {
+            return User::userAccessControl();
+        }
+        
+        if ($year == null) {
+            $year = date("Y");
+        }
+        $statistics = [];
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where('request.requester_gender', '=', "M")
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->get();
+        $statistics['mailsrequest'] = $requestscount[0]->requests_count;
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where('request.requester_gender', '=', "F")
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->get();
+        $statistics['femailsrequest'] = $requestscount[0]->requests_count;
+
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where('request.status', '=', 1)
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->get();
+        $statistics['newrequest'] = $requestscount[0]->requests_count;
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where('request.status', '=', 2)
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->get();
+        $statistics['saved'] = $requestscount[0]->requests_count;
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where('request.status', '=', 3)
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->get();
+        $statistics['waitingapprove'] = $requestscount[0]->requests_count;
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where('request.status', '=', 4)
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->orWhere(function($query) {
+                    $query->where('request.status', '=', 6);
+                })
+                ->get();
+        $statistics['approved'] = $requestscount[0]->requests_count;
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->where('request.status', '=', 4)
+                ->get();
+        $statistics['waitingexchange'] = $requestscount[0]->requests_count;
+
+        $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                ->where('request.status', '=', 6)
+                ->get();
+        $statistics['exchange'] = $requestscount[0]->requests_count;
+
+        $yearexchangeide = \Illuminate\Support\Facades\DB::table('last_check')
+                ->select(\Illuminate\Support\Facades\DB::raw('SUM(aide_amount) as total'))
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(last_check.created_at)'), '=', $year)
+                ->get();
+        $statistics['approvedamount'] = $yearexchangeide[0]->total;
+
+
+        $yearexchangeide = \Illuminate\Support\Facades\DB::table('aid_exchange')
+                ->select(\Illuminate\Support\Facades\DB::raw('SUM(amount) as total'))
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(aid_exchange.created_at)'), '=', $year)
+                ->get();
+        $statistics['exchangeamount'] = $yearexchangeide[0]->total;
+
+        $statistics['waitingexchangeamount'] = $statistics['approvedamount'] - $statistics['exchangeamount'];
+
+
+        $states = \Illuminate\Support\Facades\DB::table('muscat_state')->get();
+        $requestsbystates = [];
+        for ($index = 0; $index < count($states); $index++) {
+            $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                    ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                    ->where('request.address_state', '=', $states[$index]->id)
+                    ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                    ->get();
+            $requestsbystates[$states[$index]->id] = $requestscount[0]->requests_count;
+        }
+
+
+        $reasones = \Illuminate\Support\Facades\DB::table('request_reasone')->get();
+        $requestsbyreasones = [];
+        for ($index = 0; $index < count($reasones); $index++) {
+            $requestscount = \Illuminate\Support\Facades\DB::table('request')
+                    ->select(\Illuminate\Support\Facades\DB::raw('count(*) as requests_count'))
+                    ->where('request.reasone', '=', $reasones[$index]->id)
+                     ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', $year)
+                    ->get();
+            $requestsbyreasones[$reasones[$index]->id] = $requestscount[0]->requests_count;
+        }
+
+
+        $aidbudgetyears = \Illuminate\Support\Facades\DB::table('aid_budget')->get(["year"]);
+
+        return view("pages.financialaidssystem.index")
+                        ->with("reasones", $reasones)
+                        ->with("requestsbyreasones", $requestsbyreasones)
+                        ->with("statistics", $statistics)
+                        ->with("aidbudgetyears", $aidbudgetyears)
+                        ->with("year", $year)
+                        ->with("requestsbystates", $requestsbystates)
+                        ->with("states", $states);
     }
 
     /**
@@ -313,12 +431,13 @@ class FinancialaidssystemController extends Controller {
         $requests = \Illuminate\Support\Facades\DB::table('request')
                 ->join('request_status', 'request.status', '=', 'request_status.id')
                 ->join('request_reasone', 'request.reasone', '=', 'request_reasone.id')
+                ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', date("Y"))
                 ->orderBy('request.created_at', 'DESC')
                 ->select(
                         'request.*', 'request_reasone.type as requestreasone', 'request_status.title as requeststatus')
                 ->where('request.status', '=', 4)//from the table 4 = approved
                 ->orWhere(function($query) {
-                    $query->where('request.status', '=', 6);
+                    $query->where('request.status', '=', 6);//from the table 6 = aid exchenge done
                 })
                 ->paginate(25);
         $requests->setPath('');
@@ -336,6 +455,7 @@ class FinancialaidssystemController extends Controller {
                 ->join('request_status', 'request.status', '=', 'request_status.id')
                 ->join('request_reasone', 'request.reasone', '=', 'request_reasone.id')
                 ->join('last_check', 'request.id', '=', 'last_check.request')
+                 ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', date("Y"))
                 ->orderBy('request.created_at', 'DESC')
                 ->select(
                         'request.*', 'last_check.id as last_check_id', 'last_check.created_at as last_check_created_at', 'last_check.updated_at as last_check_updated_at', 'last_check.request as last_check_request', 'last_check.checker as last_check_checker', 'last_check.not as last_check_not', 'last_check.aide_amount as approved_aide_amount', 'request_reasone.type as requestreasone', 'request_status.title as requeststatus')
@@ -459,6 +579,7 @@ class FinancialaidssystemController extends Controller {
         $requests = \Illuminate\Support\Facades\DB::table('request')
                 ->join('request_status', 'request.status', '=', 'request_status.id')
                 ->join('request_reasone', 'request.reasone', '=', 'request_reasone.id')
+                 ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', date("Y"))
                 ->orderBy('request.created_at', 'DESC')
                 ->select(
                         'request.*', 'request_reasone.type as requestreasone', 'request_status.title as requeststatus')
@@ -480,10 +601,11 @@ class FinancialaidssystemController extends Controller {
         $requests = \Illuminate\Support\Facades\DB::table('request')
                 ->join('request_status', 'request.status', '=', 'request_status.id')
                 ->join('request_reasone', 'request.reasone', '=', 'request_reasone.id')
+                 ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', date("Y"))
                 ->orderBy('request.created_at', 'DESC')
                 ->select(
                         'request.*', 'request_reasone.type as requestreasone', 'request_status.title as requeststatus')
-                ->where('request.status', '=', 3)//from the table 1 = new
+                ->where('request.status', '=', 3)//from the table 3 = checked request
 //                ->orderBy('request.created_at', 'desc')
                 ->paginate(25);
         $requests->setPath('');
@@ -501,6 +623,7 @@ class FinancialaidssystemController extends Controller {
         $requests = \Illuminate\Support\Facades\DB::table('request')
                 ->join('request_status', 'request.status', '=', 'request_status.id')
                 ->join('request_reasone', 'request.reasone', '=', 'request_reasone.id')
+                 ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', date("Y"))
                 ->orderBy('request.created_at', 'DESC')
                 ->select(
                         'request.*', 'request_reasone.type as requestreasone', 'request_status.title as requeststatus')
@@ -510,7 +633,7 @@ class FinancialaidssystemController extends Controller {
         $requests->setPath('');
 
         return view('pages.financialaidssystem.requestlist')
-                        ->with("flag", "checkedRequestsList")
+                        ->with("flag", "exchangeRequestsList")
                         ->with("pagetitle", "الطلبات المصروفة")
                         ->with("requests", $requests);
     }
@@ -522,6 +645,7 @@ class FinancialaidssystemController extends Controller {
         $requests = \Illuminate\Support\Facades\DB::table('request')
                 ->join('request_status', 'request.status', '=', 'request_status.id')
                 ->join('request_reasone', 'request.reasone', '=', 'request_reasone.id')
+                 ->where(\Illuminate\Support\Facades\DB::raw('YEAR(request.created_at)'), '=', date("Y"))
                 ->orderBy('request.created_at', 'DESC')
                 ->select(
                         'request.*', 'request_reasone.type as requestreasone', 'request_status.title as requeststatus')
@@ -679,17 +803,31 @@ class FinancialaidssystemController extends Controller {
         $requests = \Illuminate\Support\Facades\DB::table('request')
                 ->where('request.requester_civil_id', '=', $request->input('civilid'))
                 ->select(
-                        'request.id', 'request.requester_first_name', 'request.requester_last_name', 'request.requester_sair_name'
+                        'request.id', 
+                        'request.requester_first_name', 
+                        'request.requester_last_name',
+                        'request.requester_middle_name',
+                        'request.requester_sair_name',
+                        'request.requester_bod',
+                        'request.requester_bank_acount_id',
+                        'request.requester_marital_status',
+                        'request.address_state',
+                        'request.requester_address_district',
+                        'request.requester_phone',
+                        'request.requester_gender'
                 )
                 ->get();
 
-
+        $data["requesterinfo"] = $requests[0];
+        $shortdata = [];
         foreach ($requests as $request) {
-            array_push($data, ["name" => $request->requester_first_name
+            array_push($shortdata, ["name" => $request->requester_first_name
                 . " " . $request->requester_last_name .
                 " " . $request->requester_sair_name,
                 "id" => $request->id]);
+            
         }
+        $data["shortdata"] = $shortdata;
         return \Illuminate\Support\Facades\Response::json($data);
     }
 

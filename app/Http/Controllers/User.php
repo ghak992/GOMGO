@@ -132,7 +132,7 @@ class User extends Controller {
 
 
 //                 Authentication passed...
-                return redirect()->intended('system/route');
+                return redirect()->intended('financial-aids-system/statistics');
             } else {
                 $request->flash();
                 return redirect()->back()->withErrors(['loginwrong' => 'تأكد من معلومات تسجيل الدخول الخاصة بك']);

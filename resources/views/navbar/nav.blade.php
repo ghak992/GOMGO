@@ -74,6 +74,8 @@
                             <li><a href="<?php echo URL::asset('system-control/budget') ?>">الميزانية</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="<?php echo URL::asset('system-control/system-pages') ?>">صفحات النظام</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="<?php echo URL::asset('system-control/requests') ?>">طلبات المساعدة</a></li>
                         </ul>
                     </li>
                 <?php }
@@ -122,7 +124,7 @@
                     </a>
 
                     <ul class="dropdown-menu">
-                        <li><a href="<?php echo URL::asset('financial-aids-system') ?>">احصائيات النظام</a></li>
+                        <li><a href="<?php echo URL::asset('financial-aids-system/statistics') ?>">احصائيات النظام</a></li>
                         <li><a href="<?php echo URL::asset('financial-aids-system/new-request') ?>">طلب جديد</a></li>
                         <li><a href="<?php echo URL::asset('financial-aids-system/new-requests-list') ?>">الطلبات الجديدة</a></li>
 
@@ -145,7 +147,7 @@
 
             <ul class="nav navbar-nav navbar-right">
 
-                <li class="dropdown">
+<!--                <li class="dropdown" >
                     <a href="#" class="dropdown-toggle" 
                        data-toggle="dropdown" 
                        role="button" aria-haspopup="true" 
@@ -158,7 +160,7 @@
                         <li role="separator" class="divider"></li>
                         <li><a href="#">نظام السجل القبلي</a></li>
                     </ul>
-                </li>
+                </li>-->
                 <li><a  style="margin-right: 20px; font-size: 18px;">محافظة مسقط</a></li>
             </ul>
         </div><!-- /.navbar-collapse -->

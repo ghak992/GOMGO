@@ -22,7 +22,6 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::get('system/route', 'FinancialaidssystemController@index');
-    Route::get('financial-aids-system', 'FinancialaidssystemController@index');
 
 
 
@@ -43,6 +42,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('financial-aids-system/requests-info/{id}', 'FinancialaidssystemController@show');
     Route::get('financial-aids-system/exchange-requestso/{id}', 'FinancialaidssystemController@exchangerequests');
     Route::get('financial-aids-system/user-requests-list/{civilid}', 'FinancialaidssystemController@userRequestsList');
+    
+    Route::get('system-control/requests', 'SystemControl@requests');
+    Route::post('system-control/requests/addnew', 'SystemControl@requestsaddnew');
+    Route::post('system-control/requests/update', 'SystemControl@requestsupdate');
     
     Route::get('system-control', 'SystemControl@index');
     Route::get('system-control/users', 'SystemControl@users');
@@ -66,6 +69,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('user/updateemail', 'User@updateemail');
     Route::post('user/updateuserpageacessuth', 'User@updateaccessauth');
 
+
+        Route::get('financial-aids-system/statistics/{year?}', 'FinancialaidssystemController@index');
 
     Route::get('export/all/{flag}', 'ListExpostController@alllist');
 });
